@@ -1,0 +1,31 @@
+{
+  "name": "shoppingify-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "npx nodemon ./src/index.ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0",
+    "lodash": "^4.17.21",
+    "nodemon": "^2.0.21"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.191",
+    "@types/cookie-parser": "^1.4.3",
+    "@types/cors": "^2.8.13",
+    "@types/express": "^4.17.17",
+    "@types/jsonwebtoken": "^9.0.1",
+    "@types/node": "^18.15.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.5"
+  }
+}
