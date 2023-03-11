@@ -15,19 +15,16 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use(deserializeUser);
 
-app.use(
-  cors({
-    credentials: true,
-    origin: 'http://localhost:3000',
-  })
-);
+app.use(cors());
 
 function main() {
-  app.listen(4000, () => {
-    console.log(`Server listening at port 4000`);
-  });
-
   routes(app);
+
+  const port = process.env.PORT ?? 4000;
+
+  app.listen(port, () => {
+    console.log(`Server listening at port ${port}`);
+  });
 }
 
 main();
