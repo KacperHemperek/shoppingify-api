@@ -1,3 +1,7 @@
+import { PrismaClient } from '@prisma/client';
+
+export const prisma = new PrismaClient();
+
 const users = [
   {
     email: 'test@test.com',
@@ -37,14 +41,29 @@ export function createSession(email: string, name: string) {
   return session;
 }
 
-export function getUser(email: string) {
-  return users.find((user) => user.email === email);
+export async function getUser(email: string) {
+  return await prisma.user.findFirst({ where: { email } });
 }
 
-export function createUser(email: string, password: string, name: string) {
+export async function createUser(
+  email: string,
+  password: string,
+  name: string
+) {
   const user = { email, name, password };
 
-  users.push(user);
+  try {
+    const newUser = await prisma.user.create({
+      data: {
+        email,
+        name,
+        password,
+      },
+    });
 
-  return user;
+    return newUser;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
 }

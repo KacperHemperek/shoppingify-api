@@ -3,10 +3,10 @@ import { createSession, createUser, getUser, invalidateSession } from '../db';
 import { signJWT } from '../utils/jtw.utils';
 
 //login handler
-export function createSessionHandler(req: Request, res: Response) {
+export async function createSessionHandler(req: Request, res: Response) {
   const { email, password } = req.body;
-  //TODO: change to use database instead of a mock
-  const user = getUser(email);
+
+  const user = await getUser(email);
 
   if (!user || user.password !== password) {
     return res.status(401).send('Invalid email or password');
@@ -59,7 +59,7 @@ export function deleteSessionHandler(req: Request, res: Response) {
   return res.send(session);
 }
 
-export function createUserHandler(req: Request, res: Response) {
+export async function createUserHandler(req: Request, res: Response) {
   const { email, password, confirmPass, name } = req.body;
 
   //check if passwords are same
@@ -67,14 +67,18 @@ export function createUserHandler(req: Request, res: Response) {
     return res.status(400).send('Passwords do not match');
   }
 
-  const userFromDb = getUser(email);
+  const userFromDb = await getUser(email);
 
   //if user tries to create account but is already logged in
   if (userFromDb) {
     return res.status(403).send('User with this email already exists');
   }
 
-  createUser(email, password, name);
+  const newUser = await createUser(email, password, name);
+
+  if (!newUser) {
+    return res.status(500).send('There was a problem creating new user');
+  }
 
   const session = createSession(email, name);
 
