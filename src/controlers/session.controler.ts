@@ -16,20 +16,19 @@ export function createSessionHandler(req: Request, res: Response) {
 
   //create access token
 
-  //TODO: change 5 s to 5 minutes
   const accessToken = signJWT(
     { email: user.email, name: user.name, session: session.sessionId },
-    '5s'
+    '5m'
   );
   const refreshToken = signJWT({ sessionId: session.sessionId }, '1y');
 
   //set access token in cookie
   //set cookie to 5 mins
   res.cookie('accessToken', accessToken, { httpOnly: true, maxAge: 300000 });
-  //set cookie to 1 year
+  //set cookie to 2 year
   res.cookie('refreshToken', refreshToken, {
     httpOnly: true,
-    maxAge: 3.156e10, // 1 year
+    maxAge: 6.312e10, // 2 years
   });
 
   //send back loged in user
