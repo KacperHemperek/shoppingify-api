@@ -12,15 +12,19 @@ export async function createSessionHandler(req: Request, res: Response) {
     return res.status(401).send('Invalid email or password');
   }
 
-  const session = createSession(email, user.name);
+  const session = await createSession(user);
+
+  if (!session) {
+    return res.status(500).send('There was a problem creating new Session');
+  }
 
   //create access token
 
   const accessToken = signJWT(
-    { email: user.email, name: user.name, session: session.sessionId },
+    { email: user.email, name: user.name, session: session.id },
     '5m'
   );
-  const refreshToken = signJWT({ sessionId: session.sessionId }, '2y');
+  const refreshToken = signJWT({ sessionId: session.id }, '2y');
 
   //set access token in cookie
   //set cookie to 5 mins
@@ -42,9 +46,13 @@ export function getSessionHandler(req: Request, res: Response) {
 }
 
 //log out handler
-export function deleteSessionHandler(req: Request, res: Response) {
+export async function deleteSessionHandler(req: Request, res: Response) {
   //@ts-ignore
-  const session = invalidateSession(req.user.session);
+  const session = await invalidateSession(req.user.session);
+
+  if (!session) {
+    return res.status(500).send('There was a problem while loging out');
+  }
 
   res.cookie('accessToken', '', {
     httpOnly: true,
@@ -80,17 +88,21 @@ export async function createUserHandler(req: Request, res: Response) {
     return res.status(500).send('There was a problem creating new user');
   }
 
-  const session = createSession(email, name);
+  const session = await createSession(newUser);
+
+  if (!session) {
+    return res.status(500).send('There was a problem creating new session');
+  }
 
   const accessToken = signJWT(
     {
       email,
       name,
-      session: session.sessionId,
+      session: session.id,
     },
     '5m'
   );
-  const refreshToken = signJWT({ sessionId: session.sessionId }, '2y');
+  const refreshToken = signJWT({ sessionId: session.id }, '2y');
 
   res.cookie('accessToken', accessToken, {
     httpOnly: true,

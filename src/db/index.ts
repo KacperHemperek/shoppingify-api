@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, User } from '@prisma/client';
 
 export const prisma = new PrismaClient();
 
@@ -21,24 +21,47 @@ export function getSession(sessionId: string) {
   return session && session.valid ? session : null;
 }
 
-export function invalidateSession(sessionId: string) {
-  const session = sessions[sessionId];
+export async function invalidateSession(sessionId: number) {
+  try {
+    const session = await prisma.session.update({
+      where: {
+        id: sessionId,
+      },
+      data: {
+        valid: false,
+      },
+      select: {
+        email: true,
+        id: true,
+        name: true,
+        userId: true,
+        valid: true,
+      },
+    });
 
-  if (session) {
-    sessions[sessionId].valid = false;
+    return session;
+  } catch (error) {
+    console.log(error);
+    return null;
   }
-
-  return sessions[sessionId];
 }
 
-export function createSession(email: string, name: string) {
-  const sessionId = String(Object.keys(sessions).length + 1);
+export async function createSession(user: User) {
+  try {
+    const newSession = prisma.session.create({
+      data: {
+        userId: user.id,
+        email: user.email,
+        name: user.name,
+        valid: true,
+      },
+    });
 
-  const session = { sessionId, email, name, valid: true };
-
-  sessions[sessionId] = session;
-
-  return session;
+    return newSession;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
 }
 
 export async function getUser(email: string) {
@@ -54,13 +77,8 @@ export async function createUser(
 
   try {
     const newUser = await prisma.user.create({
-      data: {
-        email,
-        name,
-        password,
-      },
+      data: user,
     });
-
     return newUser;
   } catch (error) {
     console.error(error);
