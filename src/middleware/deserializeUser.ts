@@ -23,7 +23,7 @@ export function deserializeUser(
     return next();
   }
 
-  //expired access token but valid refresh token
+  //expired access token but valid access token
   const { payload: refresh } =
     expired && refreshToken ? verifyJWT(refreshToken) : { payload: null };
 
@@ -37,7 +37,7 @@ export function deserializeUser(
     return next();
   }
 
-  const newAccessToken = signJWT(session, '5s');
+  const newAccessToken = signJWT(session, '5m');
 
   res.cookie('accessToken', newAccessToken, {
     httpOnly: true,
