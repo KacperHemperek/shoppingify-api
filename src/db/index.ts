@@ -42,6 +42,7 @@ export async function invalidateSession(sessionId: number) {
       select: {
         email: true,
         name: true,
+        id: true,
         userId: true,
         valid: true,
       },
