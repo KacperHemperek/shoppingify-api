@@ -23,8 +23,14 @@ app.use(
 );
 
 function main() {
-  app.listen(4000, () => {
-    console.log(`Server listening at http://localhost:4000`);
+  const port = process.env.ENVIRONMENT === 'prod' ? '0.0.0.0:4000' : 4000;
+
+  app.listen(port, () => {
+    console.log(
+      `Server listening at ${
+        process.env.ENVIRONMENT === 'prod' ? port : 'http://localhost:4000'
+      }`
+    );
   });
 
   routes(app);
