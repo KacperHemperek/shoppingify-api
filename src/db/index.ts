@@ -2,19 +2,6 @@ import { PrismaClient, User } from '@prisma/client';
 
 export const prisma = new PrismaClient();
 
-const users = [
-  {
-    email: 'test@test.com',
-    password: 'password',
-    name: 'Jane Doe',
-  },
-];
-
-export const sessions: Record<
-  string,
-  { sessionId: string; email: string; valid: boolean; name: string }
-> = {};
-
 export async function getSession(sessionId: number) {
   try {
     const session = await prisma.session.findFirst({
