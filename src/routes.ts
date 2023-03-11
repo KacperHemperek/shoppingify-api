@@ -8,6 +8,10 @@ import {
 import { requireUser } from './middleware/requireUser';
 
 function routes(app: Express) {
+  app.get('/api', (req, res) => {
+    return res.send('it works');
+  });
+
   app.post('/api/session', createSessionHandler);
 
   app.post('/api/session/new', createUserHandler);
