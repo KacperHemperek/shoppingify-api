@@ -23,7 +23,7 @@ export function deserializeUser(
     return next();
   }
 
-  //expired but valid access token
+  //expired access token but valid refresh token
   const { payload: refresh } =
     expired && refreshToken ? verifyJWT(refreshToken) : { payload: null };
 

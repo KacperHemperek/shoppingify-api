@@ -1,8 +1,11 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
+import * as dotenv from 'dotenv';
 import routes from './routes';
 import { deserializeUser } from './middleware/deserializeUser';
+
+dotenv.config();
 
 const app = express();
 

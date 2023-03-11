@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { createSession, getUser, invalidateSession } from '../db';
-import { signJWT, verifyJWT } from '../utils/jtw.utils';
+import { createSession, createUser, getUser, invalidateSession } from '../db';
+import { signJWT } from '../utils/jtw.utils';
 
 //login handler
 export function createSessionHandler(req: Request, res: Response) {
@@ -20,7 +20,7 @@ export function createSessionHandler(req: Request, res: Response) {
     { email: user.email, name: user.name, session: session.sessionId },
     '5m'
   );
-  const refreshToken = signJWT({ sessionId: session.sessionId }, '1y');
+  const refreshToken = signJWT({ sessionId: session.sessionId }, '2y');
 
   //set access token in cookie
   //set cookie to 5 mins
@@ -41,7 +41,14 @@ export function getSessionHandler(req: Request, res: Response) {
   return res.send(req.user);
 }
 
+//log out handler
 export function deleteSessionHandler(req: Request, res: Response) {
+  //@ts-ignore
+  console.log({ user: req.user });
+
+  //@ts-ignore
+  const session = invalidateSession(req.user.session);
+
   res.cookie('accessToken', '', {
     httpOnly: true,
     maxAge: 0,
@@ -52,10 +59,47 @@ export function deleteSessionHandler(req: Request, res: Response) {
     maxAge: 0,
   });
 
-  //@ts-ignore
-  const session = invalidateSession(req.user.sessionId);
-
   return res.send(session);
 }
 
-//log out handler
+export function createUserHandler(req: Request, res: Response) {
+  const { email, password, confirmPass, name } = req.body;
+
+  console.log({ email });
+  //check if passwords are same
+  if (confirmPass !== password) {
+    return res.status(400).send('Passwords do not match');
+  }
+
+  const userFromDb = getUser(email);
+
+  //if user tries to create account but is already logged in
+  if (userFromDb) {
+    return res.status(403).send('User with this email already exists');
+  }
+
+  createUser(email, password, name);
+
+  const session = createSession(email, name);
+
+  const accessToken = signJWT(
+    {
+      email,
+      name,
+      session: session.sessionId,
+    },
+    '5m'
+  );
+  const refreshToken = signJWT({ sessionId: session.sessionId }, '2y');
+
+  res.cookie('accessToken', accessToken, {
+    httpOnly: true,
+    maxAge: 300000,
+  });
+
+  res.cookie('refreshToken', refreshToken, {
+    httpOnly: true,
+    maxAge: 6.312e10, // 2 years
+  });
+  return res.send(session);
+}
