@@ -31,7 +31,7 @@ export function deserializeUser(
     return next();
   }
   //@ts-ignore
-  const session = getSession(refresh.sessionId);
+  const session = await getSession(refresh.sessionId);
 
   if (!session) {
     return next();

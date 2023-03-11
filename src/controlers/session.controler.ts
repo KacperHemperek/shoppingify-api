@@ -19,7 +19,6 @@ export async function createSessionHandler(req: Request, res: Response) {
   }
 
   //create access token
-
   const accessToken = signJWT(
     { email: user.email, name: user.name, id: session.id, userId: user.id },
     '5m'
@@ -96,9 +95,10 @@ export async function createUserHandler(req: Request, res: Response) {
 
   const accessToken = signJWT(
     {
-      email,
-      name,
-      session: session.id,
+      email: newUser.email,
+      name: newUser.name,
+      id: session.id,
+      userId: newUser.id,
     },
     '5m'
   );

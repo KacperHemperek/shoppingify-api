@@ -1,11 +1,21 @@
 import jwt from 'jsonwebtoken';
 
-const privateKey = ``;
+export type AccessTokenPayload = {
+  email: string;
+  name: string;
+  id: number;
+  userId: number;
+};
 
-const publicKey = ``;
+export type RefreshTokenPayload = {
+  sessionId: number;
+};
 
 //sign jwt
-export function signJWT(payload: object, expiresIn: string | number) {
+export function signJWT(
+  payload: AccessTokenPayload | RefreshTokenPayload,
+  expiresIn: string | number
+) {
   return jwt.sign(payload, process.env.PRIVATE_KEY!, {
     algorithm: 'RS256',
     expiresIn,

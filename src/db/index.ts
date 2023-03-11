@@ -15,10 +15,19 @@ export const sessions: Record<
   { sessionId: string; email: string; valid: boolean; name: string }
 > = {};
 
-export function getSession(sessionId: string) {
-  const session = sessions[sessionId];
+export async function getSession(sessionId: number) {
+  try {
+    const session = await prisma.session.findFirst({
+      where: {
+        id: sessionId,
+      },
+    });
 
-  return session && session.valid ? session : null;
+    return session && session.valid ? session : null;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
 }
 
 export async function invalidateSession(sessionId: number) {
