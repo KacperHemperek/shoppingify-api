@@ -4,6 +4,11 @@ import { signJWT } from '../utils/jtw.utils';
 
 //login handler
 export async function createSessionHandler(req: Request, res: Response) {
+  //@ts-ignore
+  if (req.user) {
+    return res.status(400).send('User already logged in');
+  }
+
   const { email, password } = req.body;
 
   const user = await getUser(email);
@@ -67,6 +72,11 @@ export async function deleteSessionHandler(req: Request, res: Response) {
 }
 
 export async function createUserHandler(req: Request, res: Response) {
+  //@ts-ignore
+  if (req.user) {
+    return res.status(400).send('User already logged in');
+  }
+
   const { email, password, confirmPass, name } = req.body;
 
   //check if passwords are same
