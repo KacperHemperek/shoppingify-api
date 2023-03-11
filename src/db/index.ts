@@ -20,13 +20,9 @@ export function getSession(sessionId: string) {
 export function invalidateSession(sessionId: string) {
   const session = sessions[sessionId];
 
-  console.log({ sessionId });
-
   if (session) {
     sessions[sessionId].valid = false;
   }
-
-  console.log(sessions[sessionId]);
 
   return sessions[sessionId];
 }

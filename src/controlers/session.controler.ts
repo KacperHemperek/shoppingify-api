@@ -44,9 +44,6 @@ export function getSessionHandler(req: Request, res: Response) {
 //log out handler
 export function deleteSessionHandler(req: Request, res: Response) {
   //@ts-ignore
-  console.log({ user: req.user });
-
-  //@ts-ignore
   const session = invalidateSession(req.user.session);
 
   res.cookie('accessToken', '', {
@@ -65,7 +62,6 @@ export function deleteSessionHandler(req: Request, res: Response) {
 export function createUserHandler(req: Request, res: Response) {
   const { email, password, confirmPass, name } = req.body;
 
-  console.log({ email });
   //check if passwords are same
   if (confirmPass !== password) {
     return res.status(400).send('Passwords do not match');
