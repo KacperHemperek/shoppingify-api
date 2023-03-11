@@ -3,7 +3,7 @@ import { signJWT, verifyJWT } from '../utils/jtw.utils';
 import { set } from 'lodash';
 import { getSession } from '../db';
 
-export function deserializeUser(
+export async function deserializeUser(
   req: Request,
   res: Response,
   next: NextFunction
@@ -30,8 +30,10 @@ export function deserializeUser(
   if (!refresh) {
     return next();
   }
-  //@ts-ignore
-  const session = await getSession(refresh.sessionId);
+
+  const session = await getSession(
+    typeof refresh === 'string' ? refresh : refresh.sessionId
+  );
 
   if (!session) {
     return next();

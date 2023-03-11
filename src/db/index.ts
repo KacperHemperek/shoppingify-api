@@ -25,7 +25,7 @@ export async function getSession(sessionId: number) {
 
     return session && session.valid ? session : null;
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return null;
   }
 }
@@ -41,7 +41,6 @@ export async function invalidateSession(sessionId: number) {
       },
       select: {
         email: true,
-        id: true,
         name: true,
         userId: true,
         valid: true,
@@ -50,7 +49,7 @@ export async function invalidateSession(sessionId: number) {
 
     return session;
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return null;
   }
 }

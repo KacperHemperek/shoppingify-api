@@ -47,7 +47,7 @@ export function getSessionHandler(req: Request, res: Response) {
 //log out handler
 export async function deleteSessionHandler(req: Request, res: Response) {
   //@ts-ignore
-  const session = await invalidateSession(req.user.session);
+  const session = await invalidateSession(req.user.id);
 
   if (!session) {
     return res.status(500).send('There was a problem while loging out');
