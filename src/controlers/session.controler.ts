@@ -75,12 +75,7 @@ export async function createUserHandler(req: Request, res: Response) {
     return res.status(400).send({ message: 'User already logged in' });
   }
 
-  const { email, password, confirmPass, name } = req.body;
-
-  //check if passwords are same
-  if (confirmPass !== password) {
-    return res.status(400).send({ message: 'Passwords do not match' });
-  }
+  const { email, password, name } = req.body;
 
   const userFromDb = await getUser(email);
 
