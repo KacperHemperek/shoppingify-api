@@ -14,7 +14,7 @@ export async function createSessionHandler(req: Request, res: Response) {
   const user = await getUser(email);
 
   if (!user || user.password !== password) {
-    return res.status(401).send({ message: 'Invalid email or password' });
+    return res.status(403).send({ message: 'Invalid email or password' });
   }
 
   const session = await createSession(user);
@@ -30,15 +30,15 @@ export async function createSessionHandler(req: Request, res: Response) {
     { email: user.email, name: user.name, id: session.id, userId: user.id },
     '5m'
   );
-  const refreshToken = signJWT({ sessionId: session.id }, '2y');
+  const refreshToken = signJWT({ sessionId: session.id }, '1y');
 
   //set access token in cookie
   //set cookie to 5 mins
   res.cookie('accessToken', accessToken, { httpOnly: true, maxAge: 300000 });
-  //set cookie to 2 year
+  //set cookie to 1 year
   res.cookie('refreshToken', refreshToken, {
     httpOnly: true,
-    maxAge: 6.312e10, // 2 years
+    maxAge: 31556926000, // 1 years
   });
 
   //send back loged in user
