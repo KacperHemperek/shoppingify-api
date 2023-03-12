@@ -6,7 +6,7 @@ import { signJWT } from '../utils/jtw.utils';
 export async function createSessionHandler(req: Request, res: Response) {
   //@ts-ignore
   if (req.user) {
-    return res.status(400).send('User already logged in');
+    return res.status(400).send({ message: 'User already logged in' });
   }
 
   const { email, password } = req.body;
@@ -14,13 +14,15 @@ export async function createSessionHandler(req: Request, res: Response) {
   const user = await getUser(email);
 
   if (!user || user.password !== password) {
-    return res.status(401).send('Invalid email or password');
+    return res.status(401).send({ message: 'Invalid email or password' });
   }
 
   const session = await createSession(user);
 
   if (!session) {
-    return res.status(500).send('There was a problem creating new Session');
+    return res
+      .status(500)
+      .send({ message: 'There was a problem creating new Session' });
   }
 
   //create access token
@@ -55,7 +57,9 @@ export async function deleteSessionHandler(req: Request, res: Response) {
   const session = await invalidateSession(req.user.id);
 
   if (!session) {
-    return res.status(500).send('There was a problem while loging out');
+    return res
+      .status(500)
+      .send({ message: 'There was a problem while loging out' });
   }
 
   res.cookie('accessToken', '', {
@@ -74,33 +78,39 @@ export async function deleteSessionHandler(req: Request, res: Response) {
 export async function createUserHandler(req: Request, res: Response) {
   //@ts-ignore
   if (req.user) {
-    return res.status(400).send('User already logged in');
+    return res.status(400).send({ message: 'User already logged in' });
   }
 
   const { email, password, confirmPass, name } = req.body;
 
   //check if passwords are same
   if (confirmPass !== password) {
-    return res.status(400).send('Passwords do not match');
+    return res.status(400).send({ message: 'Passwords do not match' });
   }
 
   const userFromDb = await getUser(email);
 
   //if user tries to create account but is already logged in
   if (userFromDb) {
-    return res.status(403).send('User with this email already exists');
+    return res
+      .status(403)
+      .send({ message: 'User with this email already exists' });
   }
 
   const newUser = await createUser(email, password, name);
 
   if (!newUser) {
-    return res.status(500).send('There was a problem creating new user');
+    return res
+      .status(500)
+      .send({ message: 'There was a problem creating new user' });
   }
 
   const session = await createSession(newUser);
 
   if (!session) {
-    return res.status(500).send('There was a problem creating new session');
+    return res
+      .status(500)
+      .send({ message: 'There was a problem creating new session' });
   }
 
   const accessToken = signJWT(
