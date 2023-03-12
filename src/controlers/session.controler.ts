@@ -62,15 +62,9 @@ export async function deleteSessionHandler(req: Request, res: Response) {
       .send({ message: 'There was a problem while loging out' });
   }
 
-  res.cookie('accessToken', '', {
-    httpOnly: true,
-    maxAge: 0,
-  });
+  res.clearCookie('accessToken');
 
-  res.cookie('refreshToken', '', {
-    httpOnly: true,
-    maxAge: 0,
-  });
+  res.clearCookie('refreshToken');
 
   return res.send(session);
 }
