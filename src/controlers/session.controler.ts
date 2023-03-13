@@ -18,6 +18,7 @@ export async function createSessionHandler(req: Request, res: Response) {
     }
 
     const session = await createSession(user);
+
     //set session token in cookie
     res.cookie('session', session.id, { httpOnly: true });
 
