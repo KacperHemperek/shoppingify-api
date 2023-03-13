@@ -11,13 +11,14 @@ function routes(app: Express) {
   app.get('/api/check-ok', (req, res) => {
     return res.send('OK');
   });
-  app.post('/api/session', createSessionHandler);
 
-  app.post('/api/session/new', createUserHandler);
+  app.post('/api/session', createSessionHandler);
 
   app.get('/api/session', getSessionHandler);
 
-  app.delete('/api/session', deleteSessionHandler);
+  app.delete('/api/session', requireUser, deleteSessionHandler);
+
+  app.post('/api/session/new', createUserHandler);
 }
 
 export default routes;

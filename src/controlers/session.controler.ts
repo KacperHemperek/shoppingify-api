@@ -1,11 +1,6 @@
 import { Request, Response } from 'express';
-import {
-  createSession,
-  createUser,
-  deleteSession,
-  getSession,
-  getUser,
-} from '../db';
+import { createUser, getUser } from '../db/user';
+import { deleteSession, createSession, getSession } from '../db/session';
 
 //login handler
 export async function createSessionHandler(req: Request, res: Response) {
@@ -27,7 +22,9 @@ export async function createSessionHandler(req: Request, res: Response) {
     res.cookie('session', session.id, { httpOnly: true });
 
     //send back logged in user
-    return res.send({ name: user.name, email: user.email, id: user.id });
+    return res.send({
+      data: { name: user.name, email: user.email, id: user.id },
+    });
   } catch (error) {
     console.error(error);
     return res
@@ -39,7 +36,7 @@ export async function createSessionHandler(req: Request, res: Response) {
 //get session
 export async function getSessionHandler(req: Request, res: Response) {
   if (!req.cookies?.session) {
-    return res.send(null);
+    return res.send({ data: null });
   }
 
   try {
@@ -52,7 +49,9 @@ export async function getSessionHandler(req: Request, res: Response) {
     }
     const user = await getUser(Number(session.userId));
 
-    return res.send({ id: user?.id, name: user?.name, email: user?.email });
+    return res.send({
+      data: { id: user?.id, name: user?.name, email: user?.email },
+    });
   } catch (error) {
     console.error(error);
     return res
@@ -63,17 +62,13 @@ export async function getSessionHandler(req: Request, res: Response) {
 
 //log out handler
 export async function deleteSessionHandler(req: Request, res: Response) {
-  if (!req.cookies.session) {
-    return res.status(401).send({ message: 'No session is live' });
-  }
-
   const { session: sessionId } = req.cookies;
 
   try {
     await deleteSession(Number(sessionId));
 
     res.clearCookie('session');
-    return res.send(null);
+    return res.send({ data: null });
   } catch (error) {
     res.status(500).send({ message: 'There was a problem logging out a user' });
   }
@@ -116,9 +111,11 @@ export async function createUserHandler(req: Request, res: Response) {
     res.cookie('session', session.id);
 
     return res.send({
-      id: newUser.id,
-      name: newUser.name,
-      email: newUser.email,
+      data: {
+        id: newUser.id,
+        name: newUser.name,
+        email: newUser.email,
+      },
     });
   } catch (error) {
     console.error(error);
