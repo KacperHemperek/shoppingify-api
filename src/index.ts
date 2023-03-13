@@ -12,10 +12,12 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+console.log(process.env.FRONTEND_URL);
+
 app.use(
   cors({
-    origin: process.env.FRONTEND_URLS
-      ? process.env.FRONTEND_URLS.split(' ')
+    origin: process.env.FRONTEND_URL
+      ? process.env.FRONTEND_URL
       : 'http://localhost:5173',
     credentials: true,
   })
