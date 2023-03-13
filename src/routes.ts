@@ -15,9 +15,9 @@ function routes(app: Express) {
 
   app.post('/api/session/new', createUserHandler);
 
-  app.get('/api/session', requireUser, getSessionHandler);
+  app.get('/api/session', getSessionHandler);
 
-  app.delete('/api/session', requireUser, deleteSessionHandler);
+  app.delete('/api/session', deleteSessionHandler);
 }
 
 export default routes;

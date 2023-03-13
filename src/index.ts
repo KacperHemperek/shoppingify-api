@@ -20,7 +20,7 @@ app.use(
   })
 );
 
-app.use(deserializeUser);
+// app.use(deserializeUser);
 
 function main() {
   routes(app);

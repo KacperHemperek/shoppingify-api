@@ -10,58 +10,41 @@ export async function getSession(sessionId: number) {
       },
     });
 
-    return session && session.valid ? session : null;
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
-}
-
-export async function invalidateSession(sessionId: number) {
-  try {
-    const session = await prisma.session.update({
-      where: {
-        id: sessionId,
-      },
-      data: {
-        valid: false,
-      },
-      select: {
-        email: true,
-        name: true,
-        id: true,
-        userId: true,
-        valid: true,
-      },
-    });
-
     return session;
   } catch (error) {
     console.error(error);
-    return null;
+    throw new Error('Retrieving session from database failed');
+  }
+}
+
+export async function deleteSession(sessionId: number) {
+  try {
+    await prisma.session.delete({
+      where: { id: sessionId },
+    });
+  } catch (error) {
+    console.error(error);
+    throw new Error('Deleting session failed');
   }
 }
 
 export async function createSession(user: User) {
   try {
-    const newSession = prisma.session.create({
+    return await prisma.session.create({
       data: {
         userId: user.id,
-        email: user.email,
-        name: user.name,
-        valid: true,
       },
     });
-
-    return newSession;
   } catch (error) {
     console.error(error);
-    return null;
+    throw new Error('Creating session failed');
   }
 }
 
-export async function getUser(email: string) {
-  return await prisma.user.findFirst({ where: { email } });
+export async function getUser(q: number | string) {
+  const where = typeof q === 'string' ? { email: q } : { id: q };
+
+  return await prisma.user.findFirst({ where });
 }
 
 export async function createUser(
@@ -78,6 +61,6 @@ export async function createUser(
     return newUser;
   } catch (error) {
     console.error(error);
-    return null;
+    throw new Error('Creating user failed');
   }
 }
